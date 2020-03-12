@@ -1,5 +1,5 @@
 module Types
-    InputObjects::UserInputType = GraphQL::InputObjectType.define do
+    InputObjects::ImageInputType = GraphQL::InputObjectType.define do
         name 'ImageInput'
         description 'Image added by user'
        
