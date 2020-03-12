@@ -5,14 +5,29 @@ class GraphqlController < ApplicationController
   # protect_from_forgery with: :null_session
 
   def execute
-    variables = ensure_hash(params[:variables])
-    query = params[:query]
-    operation_name = params[:operationName]
     context = {
-      # Query context goes here, for example:
-      # current_user: current_user,
+      #current_user: current_user
     }
-    result = ImageexplorerapiSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
+  
+    result = if params[:_json]
+               queries = params[:_json].map do |param|
+                 {
+                   query: param[:query],
+                   operation_name: param[:operationName],
+                   variables: ensure_hash(param[:variables]),
+                   context: context
+                 }
+               end
+               ImageexplorerapiSchema.multiplex(queries)
+             else
+              ImageexplorerapiSchema.execute(
+                 params[:query],
+                 operation_name: params[:operationName],
+                 variables: ensure_hash(params[:variables]),
+                 context: context
+               )
+             end
+  
     render json: result
   rescue => e
     raise e unless Rails.env.development?
