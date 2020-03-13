@@ -8,12 +8,12 @@ module Mutations
       field :user, Types::UserType, null: true
   
       def resolve(credentials: nil)
-        # basic validation
         return unless credentials
   
-        user = User.find_by email: credentials[:email]
+        unless user = User.find_by(email: credentials[:email])
+            return GraphQL::ExecutionError.new("error: no user with that email.");
+          end
 
-        return unless user
         return unless user.authenticate(credentials[:password])
   
         crypt = ActiveSupport::MessageEncryptor.new(Rails.application.credentials.secret_key_base.byteslice(0..31))
