@@ -1,25 +1,24 @@
 module Mutations
-    class SignInUser < BaseMutation
-      null true
-  
-      argument :credentials, Types::AuthProviderCredentialsInput, required: false
-  
-      field :token, String, null: true
-      field :user, Types::UserType, null: true
-  
-      def resolve(credentials: nil)
-        return unless credentials
-  
-        unless user = User.find_by(email: credentials[:email])
-            return GraphQL::ExecutionError.new("error: no user with that email.");
-          end
+  class SignInUser < BaseMutation
+    null true
 
-        return unless user.authenticate(credentials[:password])
-  
-        crypt = ActiveSupport::MessageEncryptor.new(Rails.application.credentials.secret_key_base.byteslice(0..31))
-        token = crypt.encrypt_and_sign("user-id:#{ user.id }")
-  
-        { user: user, token: token }
+    argument :email, String, required: true
+    argument :password, String, required: true
+
+    field :token, String, null: true
+    field :user, Types::UserType, null: true
+
+    def resolve(email: nil, password: nil)
+      
+      unless user = User.find_by(email:email)
+        return GraphQL::ExecutionError.new("error: no user with that email.");
       end
+
+      return unless user.authenticate(password) #~bcrypt
+      userID = { id: user.id }
+      crypt = JWT.encode(userID,Rails.application.secrets.secret_key_base.byteslice(0..31))
+      
+      { user: user, token: crypt }
     end
+  end
 end
