@@ -5,30 +5,14 @@ class GraphqlController < ApplicationController
   # protect_from_forgery with: :null_session
 
   def execute
+    variables = ensure_hash(params[:variables])
+    query = params[:query]
+    operation_name = params[:operationName]
     context = {
-      session: session,
-      current_user: current_user
+      # Query context goes here, for example:
+      current_user: current_user,
     }
-  
-    result = if params[:_json]
-               queries = params[:_json].map do |param|
-                 {
-                   query: param[:query],
-                   operation_name: param[:operationName],
-                   variables: ensure_hash(param[:variables]),
-                   context: context
-                 }
-               end
-               ImageexplorerapiSchema.multiplex(queries)
-             else
-              ImageexplorerapiSchema.execute(
-                 params[:query],
-                 operation_name: params[:operationName],
-                 variables: ensure_hash(params[:variables]),
-                 context: context
-               )
-             end
-  
+    result = ImageexplorerapiSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
   rescue => e
     raise e unless Rails.env.development?
@@ -38,17 +22,13 @@ class GraphqlController < ApplicationController
   private
 
   def current_user
-    # if we want to change the sign-in strategy, this is the place to do it
-    return unless session[:token]
-
-    crypt = ActiveSupport::MessageEncryptor.new(Rails.application.credentials.secret_key_base.byteslice(0..31))
-    token = crypt.decrypt_and_verify session[:token]
-    user_id = token.gsub('user-id:', '').to_i
-    User.find user_id
-  rescue ActiveSupport::MessageVerifier::InvalidSignature
-    nil
+    header = request.headers[:token]
+    decrypted = JWT.decode(header,Rails.application.secrets.secret_key_base.byteslice(0..31))[0] 
+    currentUser = User.find_by(id: decrypted['id']) 
+    return(currentUser) 
+    rescue JWT::DecodeError
+      nil  
   end
-
   # Handle form data, JSON body, or a blank value
   def ensure_hash(ambiguous_param)
     case ambiguous_param

@@ -11,10 +11,10 @@ module Mutations
     def resolve(email: nil, password: nil)
       
       unless user = User.find_by(email:email)
-        return GraphQL::ExecutionError.new("error: no user with that email.");
+        return GraphQL::ExecutionError.new("404 not found");
       end
 
-      return unless user.authenticate(password) #~bcrypt
+      return unless user.authenticate(password)
       userID = { id: user.id }
       crypt = JWT.encode(userID,Rails.application.secrets.secret_key_base.byteslice(0..31))
       
