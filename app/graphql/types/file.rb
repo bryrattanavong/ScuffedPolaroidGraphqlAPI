@@ -1,4 +1,4 @@
-module Scalars
+module Types
     class File < Scalars::BaseScalar
       description 'action_dispatch_uploaded_file'
   

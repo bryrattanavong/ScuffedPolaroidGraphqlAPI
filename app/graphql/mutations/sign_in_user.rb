@@ -14,7 +14,7 @@ module Mutations
         return GraphQL::ExecutionError.new("error: no user with that email.");
       end
 
-      return unless user.authenticate(password) #~bcrypt
+      return unless user.authenticate(password)
       userID = { id: user.id }
       crypt = JWT.encode(userID,Rails.application.secrets.secret_key_base.byteslice(0..31))
       
