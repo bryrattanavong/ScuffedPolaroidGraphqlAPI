@@ -15,7 +15,7 @@ gem 'puma', '~> 4.1'
 gem 'redis', '~> 4.0'
 gem 'redis-rails'
 gem 'graphql'
-gem 'apollo_upload_server', '2.0.1'
+gem 'apollo_upload_server', '2.0.0.beta.1'
 gem 'bcrypt', '~> 3.1.13'
 gem 'jwt'
 
