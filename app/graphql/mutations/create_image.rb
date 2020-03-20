@@ -6,7 +6,7 @@ module Mutations
     
       type Types::ImageType
   
-      def resolve(image:nil, image_name:nil, description:nil)
+      def resolve(image:, image_name:, description:)
        user = context[:current_user]
        Image.create!(
          image: image,
