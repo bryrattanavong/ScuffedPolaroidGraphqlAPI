@@ -16,13 +16,16 @@ gem 'redis', '~> 4.0'
 gem 'redis-rails'
 gem 'graphql'
 gem 'apollo_upload_server', '2.0.1'
-gem 'bcrypt', '~> 3.1.13'
+gem 'jwt'
 
 # Use Active Model has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
+gem 'bcrypt', '~> 3.1.13'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
+
+#Active Storage validations
+gem 'active_storage_validations'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false

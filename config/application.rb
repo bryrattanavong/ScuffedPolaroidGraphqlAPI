@@ -23,6 +23,7 @@ module Imageexplorerapi
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
+    Rails.application.routes.default_url_options[:host] =  "http://localhost:4000"
     config.middleware.use Rack::MethodOverride
     config.cache_store = :redis_store, "redis://localhost:6379/0/cache", { expires_in: 90.minutes }
 
