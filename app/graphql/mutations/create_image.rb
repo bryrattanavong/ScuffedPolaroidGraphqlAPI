@@ -2,7 +2,7 @@ module Mutations
     class CreateImage < BaseMutation
       argument :image, ApolloUploadServer::Upload, required: true
       argument :image_name, String, required: true
-      argument :description, String, required: true
+      argument :description, String, required: false
     
       type Types::ImageType
   
