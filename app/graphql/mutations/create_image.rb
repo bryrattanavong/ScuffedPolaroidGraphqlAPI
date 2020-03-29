@@ -1,16 +1,14 @@
 module Mutations
     class CreateImage < BaseMutation
       argument :image, Types::FileType, required: true
-      argument :image_name, String, required: true
       argument :description, String, required: false
     
       type Types::ImageType
   
-      def resolve(image:, image_name:, description:)
+      def resolve(image:, description:)
        user = context[:current_user]
        Image.create!(
          image: image,
-         image_name: image_name,
          description: description,
          user: user
       )
