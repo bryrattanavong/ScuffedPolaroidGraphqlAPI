@@ -5,15 +5,33 @@ module Mutations
     
       type Types::ImageType
   
-      def resolve(image:, description:)
-       user = context[:current_user]
-       Image.create!(
-         image: image,
-         description: description,
-         user: user
-      )
-      rescue ActiveRecord::RecordInvalid => e
-        GraphQL::ExecutionError.new("Invalid input: #{e.record.errors.full_messages.join(', ')}")
+      def resolve(image:, description: nil)
+        user = context[:current_user]
+        image = Image.create(
+          image: image,
+          description: description,
+          user: user
+        )
+        raise GraphQL::ExecutionError, image.errors.full_messages.join(", ") unless image.errors.empty?
+        if description
+          tags = description.to_s.scan(/#\w+/).map{|tag| tag.gsub("#", "")}
+          if tags
+            tags.each do |tag|
+              hash_tag = HashTag.find_by(name: tag)
+              if hash_tag.nil?
+                hash_tag = HashTag.create(
+                  name: tag
+                )
+              end
+            image_hashtag = ImageHashTag.create(
+              image_id: image.id,
+              hash_tag_id: hash_tag.id
+            )
+            raise GraphQL::ExecutionError, image_hashtag.errors.full_messages.join(", ") unless image_hashtag.errors.empty?   
+            end
+          end
+        end
+        image 
       end
     end
   end 

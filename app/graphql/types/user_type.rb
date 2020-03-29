@@ -3,6 +3,6 @@ module Types
     field :id, ID, null: false
     field :name, String, null: false
     field :email, String, null: false
-    field :images,[ImageType], null:false
+    field :images,[ImageType], null:true
   end
 end
