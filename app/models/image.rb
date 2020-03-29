@@ -3,6 +3,8 @@ class Image < ApplicationRecord
 
   belongs_to :user
   has_one_attached :image
+  has_many :image_hash_tags
+  has_many :hash_tags, through: :image_hash_tags
 
   validates :image, attached: true, content_type: ['image/png', 'image/jpg', 'image/jpeg']
   
