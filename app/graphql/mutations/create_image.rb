@@ -2,15 +2,15 @@ module Mutations
   class CreateImage < BaseMutation
     argument :image, Types::FileType, required: true
     argument :description, String, required: false
+    argument :people, [String], required: false
   
     type Types::ImageType
 
-    def resolve(image:, description: nil)
-      user = context[:current_user]
+    def resolve(image:, description: nil, people: nil)
       image = Image.create(
         image: image,
         description: description,
-        user: user
+        user: context[:current_user]
       )
       raise GraphQL::ExecutionError, image.errors.full_messages.join(", ") unless image.errors.empty?
       if image.present?
