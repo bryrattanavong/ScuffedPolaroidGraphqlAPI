@@ -7,6 +7,7 @@ module Mutations
     type Types::ImageType
 
     def resolve(image:, description: nil, people: nil)
+      authorized_user
       image = Image.create(
         image: image,
         description: description,

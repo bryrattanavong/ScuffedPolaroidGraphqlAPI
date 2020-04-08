@@ -6,6 +6,7 @@ module Mutations
         field :errors, [String], null: false
         
         def resolve(id:)
+            authorized_user
             image = Image.find(id)
             image.destroy
             {
