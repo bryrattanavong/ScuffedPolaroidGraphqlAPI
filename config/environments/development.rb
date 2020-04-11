@@ -18,7 +18,7 @@ Rails.application.configure do
     expires_in: 1.hour,
     namespace: 'cache',
     redis: { host: 'localhost', port: 6379, db: 0 },
-    }
+  }
 
   config.active_record.cache_versioning = false
 

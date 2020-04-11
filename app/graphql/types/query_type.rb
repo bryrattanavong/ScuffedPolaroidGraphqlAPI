@@ -4,5 +4,6 @@ module Types
     field :images, resolver: Queries::Images, description: 'Get all images'
     field :hash_tags, resolver: Queries::HashTags, description: 'Get all hashtags'
     field :people, resolver: Queries::People, description: 'Get all people'
+    field :search_images, resolver: Queries::SearchImages, description: 'Search images'
   end
 end
