@@ -1,26 +1,36 @@
+require 'search_object'
+require 'search_object/plugin/graphql'
+
 module Queries
     class SearchImages < BaseQuery
-        argument :options, [String], required: false
+        include SearchObject.module(:graphql)
+
+        scope { Image.all }
 
         type Types::ImageType.connection_type, null: false
 
-        def resolve(options: nil)
-            results = []
-            options.each do |option|
-                if option.start_with?('#')
-                    tag  = option.gsub('#', '')
-                    images = Image.joins(:hash_tags).where(hash_tags:{name:tag})
-                    images.each do |image|
-                        results.append(image)
-                    end
-                else
-                    images = Image.joins(:people).where(people:{name:option})
-                    images.each do |image|
-                        results.append(image)
-                    end
-                end
-            end
-            results
+        class ImageFilter < ::Types::BaseInputObject
+            argument :OR, [self], required: false
+            argument :description_contains, String, required: false
+            argument :hashtag_contains, String, required: false
+            argument :person_contains, String, required: false
+        end
+        
+        option :filter, type: ImageFilter, with: :apply_filter
+
+        def apply_filter(scope, value)
+            branches = normalize_filters(value).reduce { |a, b| a.or(b) }
+            scope.merge branches
+        end
+        
+        def normalize_filters(value, branches = [])
+            scope = Image.all
+            scope = scope.where('description LIKE ?', "%#{value[:description_contains]}%") if value[:description_contains]
+            scope = scope.joins(:hash_tags).where(hash_tags:{name: value[:hashtag_contains] }) if value[:hashtag_contains]
+            scope = scope.joins(:people).where(people:{name: value[:person_contains] }) if value[:person_contains]
+            branches << scope
+            value[:OR].reduce(branches) { |s, v| normalize_filters(v, s) } if value[:OR].present?
+            branches
         end
     end
 end

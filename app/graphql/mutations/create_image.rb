@@ -9,7 +9,7 @@ module Mutations
     def resolve(image:, description: nil, people: nil)
       authorized_user
       image = Image.create(
-        image: image,
+        image: image, 
         description: description,
         user: context[:current_user]
       )

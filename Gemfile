@@ -17,6 +17,7 @@ gem 'redis-rails'
 gem 'graphql'
 gem 'apollo_upload_server', '2.0.1'
 gem 'jwt'
+gem 'search_object_graphql'
 
 # Use Active Model has_secure_password
 gem 'bcrypt', '~> 3.1.13'

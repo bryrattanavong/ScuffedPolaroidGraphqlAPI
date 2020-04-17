@@ -171,6 +171,10 @@ GEM
       rspec-support (~> 3.9.0)
     rspec-support (3.9.0)
     ruby_dep (1.5.0)
+    search_object (1.2.4)
+    search_object_graphql (0.3.1)
+      graphql (~> 1.8)
+      search_object (~> 1.2.2)
     spring (2.1.0)
     spring-watcher-listen (2.0.1)
       listen (>= 2.7, < 4.0)
@@ -210,6 +214,7 @@ DEPENDENCIES
   redis (~> 4.0)
   redis-rails
   rspec-rails
+  search_object_graphql
   spring
   spring-watcher-listen (~> 2.0.0)
   tzinfo-data
