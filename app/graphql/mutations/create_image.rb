@@ -9,7 +9,7 @@ module Mutations
     def resolve(image:, description: nil, people: nil)
       authorized_user
       image = Image.create(
-        image: image,
+        image: image, 
         description: description,
         user: context[:current_user]
       )
@@ -21,7 +21,6 @@ module Mutations
             hash_tag = HashTag.create(
               name: tag
             )
-            raise GraphQL::ExecutionError, hash_tag.errors.full_messages.join(", ") unless hash_tag.errors.empty?
           end
           image_hashtag = ImageHashTag.create(
             image_id: image.id,
@@ -36,7 +35,6 @@ module Mutations
               person = Person.create(
                 name: person_name
               )
-              raise GraphQL::ExecutionError, person.errors.full_messages.join(", ") unless person.errors.empty?   
             end
             image_person = ImagePerson.create(
               image_id: image.id,
