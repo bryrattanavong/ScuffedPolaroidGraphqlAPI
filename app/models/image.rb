@@ -9,8 +9,9 @@ class Image < ApplicationRecord
   has_many :people, through: :image_people
 
   validates :image, attached: true, content_type: ['image/png', 'image/jpg', 'image/jpeg']
-  
   def image_url
-    Rails.application.routes.url_helpers.rails_blob_url(image)
+    Rails.cache.fetch([cache_key, __method__]) do
+      Rails.application.routes.url_helpers.rails_blob_url(image)
+    end 
   end
 end
